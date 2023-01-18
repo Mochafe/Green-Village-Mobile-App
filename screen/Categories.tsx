@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
+import {GetCategories} from '../fetch/Category';
 import config from '../config.json';
 
 interface CategoriesCardParameters {
@@ -25,6 +26,7 @@ interface CategoriesApi {
   id: number;
   name: string;
   image?: ImageApi;
+  parent?: CategoriesApi;
 }
 
 const stylesCategoriesCard = StyleSheet.create({
@@ -73,10 +75,13 @@ const Categories = ({navigation}: any): JSX.Element => {
   const [categories, setCategories] = useState<CategoriesApi[]>([]);
 
   useEffect(() => {
-    fetch(`${config.baseUrl}/api/categories.json`).then(response => {
-      response.json().then(json => {
-        setCategories(json);
+    GetCategories().then((result: any) => {
+      result.forEach((element: any, index: any) => {
+        if (element.parent || element.id === 1) {
+          delete result[index];
+        }
       });
+      setCategories(result);
     });
   }, []);
   return (
@@ -86,6 +91,7 @@ const Categories = ({navigation}: any): JSX.Element => {
       <ScrollView contentContainerStyle={categoriesStyle.categoriesList}>
         {categories.map(value => (
           <CategoriesCard
+            key={'product-' + value.id}
             navigation={navigation}
             id={value.id}
             name={value.name}
