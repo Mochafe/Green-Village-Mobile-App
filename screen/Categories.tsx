@@ -1,12 +1,11 @@
 import {
-  Button,
   Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import config from '../config.json';
 
 interface CategoriesCardParameters {
@@ -17,13 +16,15 @@ interface CategoriesCardParameters {
 }
 
 interface ImageApi {
-    
+  id: number;
+  path: string;
+  name: string;
 }
 
 interface CategoriesApi {
-    id: number;
-    name: string;
-    image?: 
+  id: number;
+  name: string;
+  image?: ImageApi;
 }
 
 const stylesCategoriesCard = StyleSheet.create({
@@ -34,6 +35,8 @@ const stylesCategoriesCard = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     flexDirection: 'column',
+    marginVertical: 15,
+    padding: 10,
   },
   categoryTitle: {
     flex: 0.3,
@@ -45,7 +48,6 @@ const stylesCategoriesCard = StyleSheet.create({
   },
   thumbnail: {
     flex: 0.7,
-    width: 'auto',
     height: '80%',
   },
 });
@@ -59,7 +61,7 @@ const CategoriesCard = (props: CategoriesCardParameters) => {
       }>
       <Image
         style={stylesCategoriesCard.thumbnail}
-        source={{uri: props.image, cache: 'force-cache'}}
+        source={{uri: config.baseUrl + props.image, cache: 'force-cache'}}
         loadingIndicatorSource={{uri: props.image}}
       />
       <Text style={stylesCategoriesCard.categoryTitle}>{props.name}</Text>
@@ -68,25 +70,28 @@ const CategoriesCard = (props: CategoriesCardParameters) => {
 };
 
 const Categories = ({navigation}: any): JSX.Element => {
-    const categories = useState([])
-    useEffect(() => {
-        fetch(`${config.baseUrl}/api/categories.json`)
-            .then(response => {
-                response.json()
-                    .then(json)
-            })
-    }, []);
+  const [categories, setCategories] = useState<CategoriesApi[]>([]);
+
+  useEffect(() => {
+    fetch(`${config.baseUrl}/api/categories.json`).then(response => {
+      response.json().then(json => {
+        setCategories(json);
+      });
+    });
+  }, []);
   return (
     <>
       <Text style={categoriesStyle.title}>Liste des catégories</Text>
 
       <ScrollView contentContainerStyle={categoriesStyle.categoriesList}>
-        <CategoriesCard
-          navigation={navigation}
-          id={1}
-          name={'Test'}
-          image="https://picsum.photos/200/300"
-        />
+        {categories.map(value => (
+          <CategoriesCard
+            navigation={navigation}
+            id={value.id}
+            name={value.name}
+            image={value.image?.path}
+          />
+        ))}
       </ScrollView>
     </>
   );
