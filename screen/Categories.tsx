@@ -9,27 +9,27 @@ import React, {useEffect, useState} from 'react';
 import {GetCategories} from '../fetch/Category';
 import config from '../config.json';
 
-interface CategoriesCardParameters {
+export interface CategoriesCardParameters {
   navigation: any;
   id: number;
   name: string;
   image: string;
 }
 
-interface ImageApi {
+export interface ImageApi {
   id: number;
   path: string;
   name: string;
 }
 
-interface CategoriesApi {
+export interface CategoriesApi {
   id: number;
   name: string;
   image?: ImageApi;
   parent?: CategoriesApi;
 }
 
-const stylesCategoriesCard = StyleSheet.create({
+export const stylesCategoriesCard = StyleSheet.create({
   card: {
     width: '90%',
     height: 200,
@@ -59,7 +59,10 @@ const CategoriesCard = (props: CategoriesCardParameters) => {
     <TouchableOpacity
       style={stylesCategoriesCard.card}
       onPress={() =>
-        props.navigation.navigate('SubCategories', {id: props.id})
+        props.navigation.navigate('SubCategories', {
+          id: props.id,
+          parentName: props.name,
+        })
       }>
       <Image
         style={stylesCategoriesCard.thumbnail}
@@ -71,7 +74,7 @@ const CategoriesCard = (props: CategoriesCardParameters) => {
   );
 };
 
-const Categories = ({navigation}: any): JSX.Element => {
+export const Categories = ({navigation}: any): JSX.Element => {
   const [categories, setCategories] = useState<CategoriesApi[]>([]);
 
   useEffect(() => {
@@ -103,7 +106,7 @@ const Categories = ({navigation}: any): JSX.Element => {
   );
 };
 
-const categoriesStyle = StyleSheet.create({
+export const categoriesStyle = StyleSheet.create({
   title: {
     textAlign: 'center',
     marginVertical: 16,
