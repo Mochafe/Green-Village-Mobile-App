@@ -50,7 +50,9 @@ export const stylesCategoriesCard = StyleSheet.create({
   },
   thumbnail: {
     flex: 0.7,
-    height: '80%',
+    height: null,
+    width: null,
+    resizeMode: 'contain',
   },
 });
 

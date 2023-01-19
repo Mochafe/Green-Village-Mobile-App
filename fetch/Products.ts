@@ -3,6 +3,7 @@ import config from '../config.json';
 
 export interface ProductApi {
   id: number;
+  reference: string;
   name: string;
   description: string;
   price: number;
