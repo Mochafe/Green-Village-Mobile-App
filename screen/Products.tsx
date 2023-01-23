@@ -1,7 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {stylesCategoriesCard, categoriesStyle} from './Categories';
 import config from '../config.json';
-import {Text, TouchableOpacity, Image, ScrollView} from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  View,
+} from 'react-native';
 import {GetProductsByCategory, ProductApi} from '../fetch/Products';
 
 const ProductsCard = (props: any) => {
@@ -25,16 +33,38 @@ const ProductsCard = (props: any) => {
   );
 };
 
+export const loadingStyle = StyleSheet.create({
+  container: {
+    height: '100%',
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
 const Products = ({route, navigation}: any): JSX.Element => {
   const {category, subcategoryName} = route.params;
   const [products, setProducts] = useState<ProductApi[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    GetProductsByCategory(category).then(response => setProducts(response));
+    GetProductsByCategory(category, navigation).then(response => {
+      setProducts(response);
+      setIsLoading(false);
+    });
   }, [category]);
   return (
     <>
       <Text style={categoriesStyle.title}>{subcategoryName}</Text>
+      {isLoading ? (
+        <View style={loadingStyle.container}>
+          <ActivityIndicator size={'large'} />
+        </View>
+      ) : (
+        ''
+      )}
+
       <ScrollView contentContainerStyle={categoriesStyle.categoriesList}>
         {products.map(product => (
           <ProductsCard

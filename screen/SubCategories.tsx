@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Text, TouchableOpacity, Image, ScrollView} from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+  View,
+} from 'react-native';
 import {
   CategoriesApi,
   categoriesStyle,
@@ -8,6 +15,7 @@ import {
 } from './Categories';
 import {GetCategories} from '../fetch/Category';
 import config from '../config.json';
+import {loadingStyle} from './Products';
 
 const SubcategoriesCard = (props: CategoriesCardParameters) => {
   return (
@@ -32,9 +40,10 @@ const SubcategoriesCard = (props: CategoriesCardParameters) => {
 const SubCategories = ({route, navigation}: any): JSX.Element => {
   const {id, parentName} = route.params;
   const [subcategories, setSubcategories] = useState<CategoriesApi[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    GetCategories().then((result: any) => {
+    GetCategories(navigation).then((result: any) => {
       result.forEach((element: CategoriesApi, index: any) => {
         if (!element.parent) {
           delete result[index];
@@ -46,11 +55,21 @@ const SubCategories = ({route, navigation}: any): JSX.Element => {
         }
       });
       setSubcategories(result);
+      setIsLoading(false);
     });
   }, [id]);
   return (
     <>
       <Text style={categoriesStyle.title}>{parentName}</Text>
+
+      {isLoading ? (
+        <View style={loadingStyle.container}>
+          <ActivityIndicator size={'large'} />
+        </View>
+      ) : (
+        ''
+      )}
+
       <ScrollView contentContainerStyle={categoriesStyle.categoriesList}>
         {subcategories.map(subcategory => (
           <SubcategoriesCard

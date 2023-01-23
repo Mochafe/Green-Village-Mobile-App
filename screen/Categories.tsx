@@ -4,10 +4,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {GetCategories} from '../fetch/Category';
 import config from '../config.json';
+import {loadingStyle} from './Products';
 
 export interface CategoriesCardParameters {
   navigation: any;
@@ -78,20 +81,30 @@ const CategoriesCard = (props: CategoriesCardParameters) => {
 
 export const Categories = ({navigation}: any): JSX.Element => {
   const [categories, setCategories] = useState<CategoriesApi[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    GetCategories().then((result: any) => {
+    GetCategories(navigation).then((result: any) => {
       result.forEach((element: any, index: any) => {
         if (element.parent || element.id === 1) {
           delete result[index];
         }
       });
       setCategories(result);
+      setIsLoading(false);
     });
   }, []);
   return (
     <>
       <Text style={categoriesStyle.title}>Liste des catégories</Text>
+
+      {isLoading ? (
+        <View style={loadingStyle.container}>
+          <ActivityIndicator size={'large'} />
+        </View>
+      ) : (
+        ''
+      )}
 
       <ScrollView contentContainerStyle={categoriesStyle.categoriesList}>
         {categories.map(value => (

@@ -5,6 +5,7 @@ import Categories from './screen/Categories';
 import SubCategories from './screen/SubCategories';
 import Products from './screen/Products';
 import Product from './screen/Product';
+import Authentification from './screen/Authentification';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +13,14 @@ const App = (): JSX.Element => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="Authentification"
+          component={Authentification}
+          options={{
+            title: 'Authentification',
+            headerTitleAlign: 'center',
+          }}
+        />
         <Stack.Screen
           name="Categories"
           component={Categories}
